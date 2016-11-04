@@ -11,6 +11,9 @@
     #canvas         { display: inline-block; width: 100%; height: 100%; }
     #instructions   { font-style: italic; color: #999; font-size: 9pt; margin-left: 1em; margin-top: 0.5em; }
     #instructions b { color: #DDD; }
+
+    /* Change the style (width, height, font size) of element with id platformer
+       if the meets the minimum width and minimum height: */
     @media screen and (min-width:     0px) and (min-height:    0px) { #platformer { width:  512px; height: 384px; font-size:  7pt; } } /* block = 16 */
     @media screen and (min-width:   840px) and (min-height:  530px) { #platformer { width:  640px; height: 480px; font-size:  9pt; } } /* block = 20 */
     @media screen and (min-width:   968px) and (min-height:  626px) { #platformer { width:  768px; height: 576px; font-size: 11pt; } } /* block = 24 */
@@ -36,8 +39,8 @@
 
   </div>
 
-  <script src="fpsmeter.min.js"></script>
-  <script src="platformer.js"></script>
+  <script src="./fpsmeter.min.js"></script>
+  <script src="./platformer.js"></script>
 
 </body>
 </html>
