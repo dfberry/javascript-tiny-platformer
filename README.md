@@ -26,3 +26,13 @@ License
 
 [MIT](http://en.wikipedia.org/wiki/MIT_License) license.
 
+
+Dina's Notes
+=======
+
+
+Tile Map Editor
+=======
+Download and install Tiled = http://www.mapeditor.org/
+Make sure file save the map with Tile Layer Format of 'csv'
+

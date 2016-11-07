@@ -10,6 +10,7 @@
     #platformer     { margin: 1em auto; position: relative; width: 512px; height: 384px; }
     #canvas         { display: inline-block; width: 100%; height: 100%; }
     #instructions   { font-style: italic; color: #999; font-size: 9pt; margin-left: 1em; margin-top: 0.5em; }
+    .action         { color: #999; font-size: 12pt; margin-left: 1em; margin-top: 0.5em; }
     #instructions b { color: #DDD; }
 
     /* Change the style (width, height, font size) of element with id platformer
@@ -37,6 +38,13 @@
       <b>LEFT/RIGHT</b> to move, <b>SPACE</b> to jump, collect gold and jump on monsters.
     </div>
 
+    <div>
+    
+      <div id='user' class="action"></div>
+      <div id='game' class="action"></div>
+      <div id='monster' class="action"></div>
+      <div id='player' class="action"></div>
+    </div>
   </div>
 
   <script src="./fpsmeter.min.js"></script>

@@ -26,8 +26,8 @@
     return Math.max(min, Math.min(max, x));
   }
 
+  // get file by URL
   function get(url, onsuccess) {
-    console.log("fetch url " + url);
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if ((request.readyState == 4) && (request.status == 200))
@@ -37,6 +37,7 @@
     request.send();
   }
 
+  // do two objects overlap?
   function overlap(x1, y1, w1, h1, x2, y2, w2, h2) {
     return !(((x1 + w1 - 1) < x2) ||
              ((x2 + w2 - 1) < x1) ||
@@ -82,23 +83,27 @@
   // UPDATE LOOP
   //-------------------------------------------------------------------------
 
+
+  function showActionOnPage(id, msg){
+    if(id && msg) document.getElementById(id).innerHTML = id + " " + msg ;
+  }
+
   function onkey(ev, key, down) {
     
     switch(key) {
       case KEY.LEFT:  
-        console.log("keypress LEFT");
+        showActionOnPage("user", "left");
         player.left  = down; ev.preventDefault(); return false;
       case KEY.RIGHT: 
-        console.log("keypress RIGHT");
+        showActionOnPage("user", "right");
         player.right = down; ev.preventDefault(); return false;
       case KEY.SPACE: 
-        console.log("keypress SPACE");
+        showActionOnPage("user", "jump");
         player.jump  = down; ev.preventDefault(); return false;
     }
   }
   
   function update(dt) {
-    console.log("update");
     updatePlayer(dt);
     updateMonsters(dt);
     checkTreasure();
@@ -129,7 +134,6 @@
   }
 
   function checkTreasure() {
-    console.log("checkTreasure");
     var n, max, t;
     for(n = 0, max = treasure.length ; n < max ; n++) {
       t = treasure[n];
@@ -139,26 +143,26 @@
   }
 
   function killMonster(monster) {
-    console.log("killMonster");
+    showActionOnPage("game", "kill Monster");
     player.killed++;
     monster.dead = true;
   }
 
   function killPlayer(player) {
-    console.log("kellPlayer");
+    showActionOnPage("game", "kill Player");
     player.x = player.start.x;
     player.y = player.start.y;
     player.dx = player.dy = 0;
   }
 
   function collectTreasure(t) {
-    console.log("collectTreasure");
+    showActionOnPage("game", "collectTreasure");
     player.collected++;
     t.collected = true;
   }
 
   function updateEntity(entity, dt) {
-    console.log("updateEntity");
+    
     var wasleft    = entity.dx  < 0,
         wasright   = entity.dx  > 0,
         falling    = entity.falling,
@@ -181,6 +185,7 @@
     if (entity.jump && !entity.jumping && !falling) {
       entity.ddy = entity.ddy - entity.impulse; // an instant big force impulse
       entity.jumping = true;
+      
     }
   
     entity.x  = entity.x  + (dt * entity.dx);
@@ -201,6 +206,8 @@
         cellright = tcell(tx + 1, ty),
         celldown  = tcell(tx,     ty + 1),
         celldiag  = tcell(tx + 1, ty + 1);
+
+
   
     if (entity.dy > 0) {
       if ((celldown && !cell) ||
@@ -247,10 +254,16 @@
         entity.right = false;
         entity.left  = true;
       }
+      showActionOnPage("monster", JSON.stringify(entity));
     }
-  
+    
+    if(entity.player) showActionOnPage("player", JSON.stringify(entity));
+
     entity.falling = ! (celldown || (nx && celldiag));
-  
+    if(entity.falling){
+      showActionOnPage("game", "falling");
+    }
+
   }
 
   //-------------------------------------------------------------------------
@@ -258,7 +271,6 @@
   //-------------------------------------------------------------------------
   
   function render(ctx, frame, dt) {
-    console.log("render");
     ctx.clearRect(0, 0, width, height);
     renderMap(ctx);
     renderTreasure(ctx, frame);
@@ -267,7 +279,6 @@
   }
 
   function renderMap(ctx) {
-    console.log("renderMap");
     var x, y, cell;
     for(y = 0 ; y < MAP.th ; y++) {
       for(x = 0 ; x < MAP.tw ; x++) {
@@ -281,7 +292,6 @@
   }
 
   function renderPlayer(ctx, dt) {
-    console.log("renderPlayer");
     ctx.fillStyle = COLOR.YELLOW;
     ctx.fillRect(player.x + (player.dx * dt), player.y + (player.dy * dt), TILE, TILE);
 
@@ -297,7 +307,6 @@
   }
 
   function renderMonsters(ctx, dt) {
-    console.log("renderMonsters");
     ctx.fillStyle = COLOR.SLATE;
     var n, max, monster;
     for(n = 0, max = monsters.length ; n < max ; n++) {
@@ -308,7 +317,6 @@
   }
 
   function renderTreasure(ctx, frame) {
-    console.log("renderTreasure");
     ctx.fillStyle   = COLOR.GOLD;
     ctx.globalAlpha = 0.25 + tweenTreasure(frame, 60);
     var n, max, t;
@@ -331,7 +339,6 @@
   //-------------------------------------------------------------------------
   
   function setup(map) {
-    console.log("setup");
     var data    = map.layers[0].data,
         objects = map.layers[1].objects,
         n, obj, entity;
@@ -350,25 +357,38 @@
   }
 
   function setupEntity(obj) {
-    console.log("setupEntity");
     var entity = {};
     entity.x        = obj.x;
     entity.y        = obj.y;
     entity.dx       = 0;
     entity.dy       = 0;
-    entity.gravity  = METER * (obj.properties.gravity || GRAVITY);
-    entity.maxdx    = METER * (obj.properties.maxdx   || MAXDX);
-    entity.maxdy    = METER * (obj.properties.maxdy   || MAXDY);
-    entity.impulse  = METER * (obj.properties.impulse || IMPULSE);
-    entity.accel    = entity.maxdx / (obj.properties.accel    || ACCEL);
-    entity.friction = entity.maxdx / (obj.properties.friction || FRICTION);
-    entity.monster  = obj.type == "monster";
-    entity.player   = obj.type == "player";
-    entity.treasure = obj.type == "treasure";
-    entity.left     = obj.properties.left;
-    entity.right    = obj.properties.right;
-    entity.start    = { x: obj.x, y: obj.y }
-    entity.killed = entity.collected = 0;
+
+      entity.monster  = obj.type == "monster";
+      entity.player   = obj.type == "player";
+      entity.treasure = obj.type == "treasure";
+      entity.start    = { x: obj.x, y: obj.y }
+      entity.killed = entity.collected = 0;
+
+      entity.gravity  = METER * GRAVITY;
+      entity.maxdx    = METER * MAXDX;
+      entity.maxdy    = METER * MAXDY;
+      entity.impulse  = METER * IMPULSE;
+      entity.accel    = entity.maxdx / ACCEL;
+      entity.friction = entity.maxdx / FRICTION;
+
+      // map doesn't have properties - could be a problem with Tiled application'
+    if(obj.properties){
+      entity.gravity  = METER * (obj.properties.gravity || GRAVITY);
+      entity.maxdx    = METER * (obj.properties.maxdx   || MAXDX);
+      entity.maxdy    = METER * (obj.properties.maxdy   || MAXDY);
+      entity.impulse  = METER * (obj.properties.impulse || IMPULSE);
+      entity.accel    = entity.maxdx / (obj.properties.accel    || ACCEL);
+      entity.friction = entity.maxdx / (obj.properties.friction || FRICTION);
+
+      entity.left     = obj.properties.left;
+      entity.right    = obj.properties.right;
+
+    }
     return entity;
   }
 
@@ -395,11 +415,12 @@
     requestAnimationFrame(frame, canvas);
   }
   
+  // listen to key events
   document.addEventListener('keydown', function(ev) { return onkey(ev, ev.keyCode, true);  }, false);
   document.addEventListener('keyup',   function(ev) { return onkey(ev, ev.keyCode, false); }, false);
 
-  console.log("get level.json file");
-  get("level.json", function(req) {
+  // load map definition file
+  get("exercise1-level.json", function(req) {
     setup(JSON.parse(req.responseText));
     frame();
   });

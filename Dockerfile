@@ -1,8 +1,8 @@
-#  Safe-frame test for ads
+#  JS Tiny Game
 #
 #
-#  $ docker build -t sf-host .
-#  $ docker run -h sfhost -it -p 8010:8010 -v /Users/dfberry/repos/:/home/nodejs/container-IAB-Safeframe-Test sf-host tail -f /dev/null
+#  $ docker build -t tiny-game.
+#  $ docker run -it -p 8010:8010 -v /Users/dfberry/repos/js-tiny-game:/home/nodejs/game tiny-game tail -f /dev/null
 
 # Git hub: https://github.com/dfberry/IAB-Safeframe-Test
 # tail -f /dev/null
