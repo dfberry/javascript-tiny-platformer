@@ -12,6 +12,8 @@
 # base image 
 FROM node:latest
 
+ADD . /home/nodejs/game
+
 RUN mkdir -p /home/nodejs/ && \
     groupadd -r nodejs && \
     useradd -r -g nodejs -d /home/nodejs nodejs && \
@@ -25,6 +27,7 @@ RUN apt-get install nano
 
 # add static server
 RUN npm install lite-server -g
+RUN npm install http-server -g
 
 # add repository
 WORKDIR /home/nodejs

@@ -85,7 +85,15 @@
 
 
   function showActionOnPage(id, msg){
-    if(id && msg) document.getElementById(id).innerHTML = id + " " + msg ;
+    if(id && msg){
+      document.getElementById(id).innerHTML = id + " " + JSON.stringify(msg).replace(/,/g, '<br>') ;
+    } 
+  }
+  function showJsonOnPage(json, id){
+    if(id && json){
+      CreateTableFromJSON(json, id);
+    } 
+    
   }
 
   function onkey(ev, key, down) {
@@ -254,10 +262,12 @@
         entity.right = false;
         entity.left  = true;
       }
-      showActionOnPage("monster", JSON.stringify(entity));
+      showActionOnPage("monster",entity);
     }
     
-    if(entity.player) showActionOnPage("player", JSON.stringify(entity));
+    if(entity.player) {
+      showActionOnPage("player", entity);
+    }
 
     entity.falling = ! (celldown || (nx && celldiag));
     if(entity.falling){
